@@ -1,0 +1,18 @@
+trigger:
+  - master
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+
+- task: VSBuild@1
+  inputs:
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    platform: 'Any CPU'
+    configuration: 'Release'
+
+- task: PublishBuildArtifacts@1
