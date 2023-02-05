@@ -8,7 +8,7 @@ public class TableClientProvider
     {
         // Environment variables if INT/PROD
         var tableName = System.Configuration.ConfigurationManager.AppSettings["COSMOS_TABLENAME"];
-        var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["COSMOS_CONNECTION_STRING"].ConnectionString;
+        var connectionString = System.Configuration.ConfigurationManager.AppSettings["COSMOS_CONNECTION_STRING"];
 
         // Environment variables if App.config not exists
         if (tableName == null || connectionString == null)  LoadLocalEnvironmentVariablesIfExists();
