@@ -1,6 +1,6 @@
 ﻿namespace dotnetwithazuretable.Api;
 
-public static class DotEnv
+public static class EnvironmentVariableManager
 {
     public static void Load(string filePath)
     {
