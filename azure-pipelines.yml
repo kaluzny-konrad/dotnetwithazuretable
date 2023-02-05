@@ -1,18 +1,46 @@
 trigger:
   - master
 
-pool:
-  vmImage: 'windows-latest'
+stages:
+- stage: Build
+  jobs:
+  - job: Build
 
-steps:
-- task: NuGetToolInstaller@1
+    pool:
+      vmImage: 'windows-latest'
 
-- task: NuGetCommand@2
+    steps:
+    - task: NuGetToolInstaller@1
 
-- task: VSBuild@1
-  inputs:
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: 'Any CPU'
-    configuration: 'Release'
+    - task: NuGetCommand@2
 
-- task: PublishBuildArtifacts@1
+    - task: VSBuild@1
+      inputs:
+        msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+        platform: 'Any CPU'
+        configuration: 'Release'
+
+    - task: PublishBuildArtifacts@1
+
+- stage: Deploy
+  jobs:
+  - job: Deploy
+
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'almostFreeSubDevOps'
+        appType: 'webApp'
+        WebAppName: 'dotnetwithazuretable'
+        packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
