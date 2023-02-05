@@ -11,8 +11,9 @@ var connectionString = Environment.GetEnvironmentVariable("COSMOS_CONNECTION_STR
 var tableServiceClient = new TableServiceClient(connectionString);
 
 // New instance of TableClient class referencing the server-side table
+var tableName = Environment.GetEnvironmentVariable("COSMOS_TABLENAME");
 var tableClient = tableServiceClient.GetTableClient(
-    tableName: "dotnetwithazuretable"
+    tableName: tableName
 );
 await tableClient.CreateIfNotExistsAsync();
 
